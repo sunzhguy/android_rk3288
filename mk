@@ -135,7 +135,7 @@ build_system()
 	return 0
 }
 
-threads=1
+threads=4
 uboot=no
 kernel=no
 system=no

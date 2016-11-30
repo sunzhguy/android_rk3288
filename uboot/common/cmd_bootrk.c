@@ -393,6 +393,7 @@ static int rk_load_kernel_logo(void)
 }
 #endif
 
+static int bootrk_no_ramdisk = 0;
 static void rk_commandline_setenv(const char *boot_name, rk_boot_img_hdr *hdr, bool charge)
 {
 #ifdef CONFIG_CMDLINE_TAG
@@ -431,7 +432,7 @@ static void rk_commandline_setenv(const char *boot_name, rk_boot_img_hdr *hdr, b
 	}
 
 #ifdef CONFIG_RK_SDCARD_BOOT_EN
-	if (StorageSDCardUpdateMode() != 0) { // sd ¿¨Éý¼¶£¬½øÈërecovery
+	if (StorageSDCardUpdateMode() != 0) { // sd \BF\A8\C9\FD\BC\B6\A3\AC\BD\F8\C8\EBrecovery
 		snprintf(command_line, sizeof(command_line),
 				"%s %s", command_line, "sdfwupdate");
 	}
@@ -493,6 +494,8 @@ static void rk_commandline_setenv(const char *boot_name, rk_boot_img_hdr *hdr, b
 	}
 
 	command_line[sizeof(command_line) - 1] = 0;
+	if(strstr(command_line, "root=") != NULL)
+		bootrk_no_ramdisk = 1;
 
 	setenv("bootargs", command_line);
 #endif /* CONFIG_CMDLINE_TAG */
@@ -557,6 +560,11 @@ int do_bootrk(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 	SecureBootSecureState2Kernel(SecureBootCheckOK);
 
 	/* after here, make sure no read/write storate */
+	if(bootrk_no_ramdisk)
+	{
+		hdr->ramdisk_addr = 0;
+		hdr->ramdisk_size = 0;
+	}
 	bootimg_print_image_hdr(hdr);
 	printf("kernel   @ 0x%08x (0x%08x)\n", hdr->kernel_addr, hdr->kernel_size);
 	printf("ramdisk  @ 0x%08x (0x%08x)\n", hdr->ramdisk_addr, hdr->ramdisk_size);
