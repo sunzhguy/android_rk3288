@@ -27,7 +27,7 @@ OUT=${BS_DIR_TOP}/out/target/product/rk3288
 #
 BS_CONFIG_BOOTLOADER_UBOOT=x3288_config
 BS_CONFIG_KERNEL=x3288_defconfig
-BS_CONFIG_FILESYSTEM=PRODUCT-rk3288-eng
+BS_CONFIT_BUILDROOT=x3288_defconfig
 
 setup_environment()
 {
@@ -79,55 +79,7 @@ build_system()
 	make || return 1
 
 	# Copy image to release directory
-	cp -v ${BS_DIR_BUILDROOT}/output/images/rootfs.ext4 ${BS_DIR_RELEASE}/qt-rootfs.img
-	cp -v ${BS_DIR_BUILDROOT}/qt-documents.txt ${BS_DIR_RELEASE}
-
-
-
-	cd ${BS_DIR_TOP} || return 1
-	source build/envsetup.sh || return 1
-	make -j${threads} ${BS_CONFIG_FILESYSTEM} || return 1
-
-	# create boot.img
-	echo -n "create boot.img without kernel... "
-	[ -d $OUT/root ] && \
-	mkbootfs $OUT/root | minigzip > $OUT/ramdisk.img && \
-        truncate -s "%4" $OUT/ramdisk.img && \
-	rkst/mkkrnlimg $OUT/ramdisk.img $BS_DIR_RELEASE/boot.img >/dev/null
-	echo "done."
-
-	# create recovery.img
-	echo -n "create recovery.img with kernel and with out resource... "
-	[ -d $OUT/recovery/root ] && \
-	mkbootfs $OUT/recovery/root | minigzip > $OUT/ramdisk-recovery.img && \
-        truncate -s "%4" $OUT/ramdisk-recovery.img && \
-	mkbootimg --kernel $OUT/kernel --ramdisk $OUT/ramdisk-recovery.img --output $OUT/recovery.img && \
-	cp -a $OUT/recovery.img $BS_DIR_RELEASE/
-	echo "done."
-
-	# create misc.img
-	echo -n "create misc.img.... "
-	cp -a rkst/Image/misc.img $BS_DIR_RELEASE/misc.img
-	cp -a rkst/Image/pcba_small_misc.img $BS_DIR_RELEASE/pcba_small_misc.img
-	cp -a rkst/Image/pcba_whole_misc.img $BS_DIR_RELEASE/pcba_whole_misc.img
-	echo "done."
-
-	# create system.img
-	if [ -d $OUT/system ]
-	then
-		echo -n "create system.img... "
-		system_size=`ls -l $OUT/system.img | awk '{print $5;}'`
-		[ $system_size -gt "0" ] || { echo "Please make first!!!" && exit 1; }
-		MAKE_EXT4FS_ARGS=" -L system -S $OUT/root/file_contexts -a system $BS_DIR_RELEASE/system.img $OUT/system"
-		ok=0
-		while [ "$ok" = "0" ]; do
-			make_ext4fs -l $system_size $MAKE_EXT4FS_ARGS >/dev/null 2>&1 &&
-			tune2fs -c -1 -i 0 $BS_DIR_RELEASE/system.img >/dev/null 2>&1 &&
-			ok=1 || system_size=$(($system_size + 5242880))
-		done
-		e2fsck -fyD $BS_DIR_RELEASE/system.img >/dev/null 2>&1 || true
-		echo "done."
-	fi
+	cp -v ${BS_DIR_BUILDROOT}/output/images/rootfs.ext2 ${BS_DIR_RELEASE}/qt_rootfs.img
 
 	chmod a+r -R $BS_DIR_RELEASE/
 
@@ -135,7 +87,7 @@ build_system()
 	cd ${BS_DIR_RELEASE} || return 1
 	# Copy package-file and parameter.txt
 	cp -av ${BS_DIR_TOOLS}/package-file ${BS_DIR_RELEASE} || return 1;
-	cp -av ${BS_DIR_TOP}/device/rockchip/rk3288/parameter.txt ${BS_DIR_RELEASE} || return 1;
+	cp -av ${BS_DIR_TOOLS}/parameter.txt ${BS_DIR_RELEASE} || return 1;
 	# Firmware pack
 	${BS_DIR_TOOLS}/afptool -pack ${BS_DIR_RELEASE}/ ${BS_DIR_RELEASE}/temp.img || return 1;
 	# Generating image
