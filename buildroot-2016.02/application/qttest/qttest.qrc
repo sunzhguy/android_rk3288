@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>slides/demo_1.png</file>
+        <file>slides/demo_2.png</file>
+        <file>slides/demo_3.png</file>
+        <file>slides/demo_4.png</file>
+        <file>slides/demo_5.png</file>
+        <file>slides/demo_6.png</file>
+        <file>Resources/btn_next.png</file>
+        <file>Resources/btn_pre.png</file>
+        <file>network.sh</file>
+        <file>qss/coffee.qss</file>
+        <file>images/red.png</file>
+        <file>images/black.png</file>
+    </qresource>
+</RCC>
