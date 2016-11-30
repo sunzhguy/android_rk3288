@@ -19,6 +19,7 @@ BS_DIR_TOOLS=${BS_DIR_TOP}/tools
 BS_DIR_RELEASE=${BS_DIR_TOP}/out/release
 BS_DIR_UBOOT=${BS_DIR_TOP}/uboot
 BS_DIR_KERNEL=${BS_DIR_TOP}/kernel
+BS_DIR_BUILDROOT=${BS_DIR_TOP}/buildroot
 OUT=${BS_DIR_TOP}/out/target/product/rk3288
 
 #
@@ -72,6 +73,17 @@ build_kernel()
 
 build_system()
 {
+	# Compiler buildroot
+	cd ${BS_DIR_BUILDROOT} || return 1
+	make ${BS_CONFIT_BUILDROOT} || return 1
+	make || return 1
+
+	# Copy image to release directory
+	cp -v ${BS_DIR_BUILDROOT}/output/images/rootfs.ext4 ${BS_DIR_RELEASE}/qt-rootfs.img
+	cp -v ${BS_DIR_BUILDROOT}/qt-documents.txt ${BS_DIR_RELEASE}
+
+
+
 	cd ${BS_DIR_TOP} || return 1
 	source build/envsetup.sh || return 1
 	make -j${threads} ${BS_CONFIG_FILESYSTEM} || return 1
