@@ -1,0 +1,15 @@
+# NAME		Relative path
+#
+#HWDEF		HWDEF
+package-file	package-file
+bootloader	uboot.bin
+parameter	parameter.txt
+misc		misc.img
+resource	resource.img
+kernel		kernel.img
+boot		boot.img
+recovery	recovery.img
+system		system.img
+backup		RESERVED
+#update-script	update-script
+#recover-script	recover-script
