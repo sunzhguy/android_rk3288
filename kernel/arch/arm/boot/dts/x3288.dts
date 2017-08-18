@@ -10,8 +10,8 @@
 // truly Mipi ips5k0350fpc
 //#include "lcd-ips5k0350fpc-mipi.dtsi"
 
-//#include "trip_mipi.dtsi"
-#include "lcd-td043mgeal_trip.dtsi"
+#include "trip_mipi.dtsi"
+//#include "lcd-td043mgeal_trip.dtsi"
 //#include "lcd-td043mgeal_5inch_trip.dtsi"
 //#include "trip_mipi_tc.dtsi"
 

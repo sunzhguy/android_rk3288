@@ -99,7 +99,7 @@ build_system()
 	return 0
 }
 
-threads=4
+threads=$(grep processor /proc/cpuinfo | awk '{field=$NF};END{print field+1}')
 uboot=no
 kernel=no
 system=no
